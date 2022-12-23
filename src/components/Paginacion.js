@@ -17,7 +17,7 @@ const Paginacion = ({ prev, next, onAnterior, onSiguiente }) => {
             <ul className='pagination justify-content-center'>
                 {prev ?
                     <li className='page-item'>
-                        <button className='page-link' onClick={handleAnterior}>
+                        <button className='page-link ' onClick={handleAnterior}>
                             Anterior
                         </button>
                     </li>
@@ -35,9 +35,11 @@ const Paginacion = ({ prev, next, onAnterior, onSiguiente }) => {
         </nav>
     )
 };
+
 export default Paginacion;
 
-/*function Paginacion({ personajes, info, onSiguiente }) {
+/*
+function Paginacion({ personajes, info }) {
     const [itemOffset, setItemOffset] = useState(0);
     const itemsPerPage = 12
 
@@ -49,11 +51,6 @@ export default Paginacion;
 
     // Invoke when user click to request another page.
     const handlePageClick = (event) => {
-        if (currentItems.length < 12) {
-            onSiguiente()
-            setItemOffset(0)
-        };
-        console.log(currentItems)
         const newOffset = (event.selected * itemsPerPage) % personajes.length;
         console.log(
             `User requested page number ${event.selected}, which is offset ${newOffset}`
@@ -75,5 +72,7 @@ export default Paginacion;
             />
         </>
     );
-};*/
+};
+
+*/
 

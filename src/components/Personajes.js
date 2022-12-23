@@ -15,7 +15,7 @@ const Personajes = ({ personajes = [] }) => {
                         {
                             personajes.map((item, index) => (
                                 <div key={index} className='col mb-4'>
-                                    <div className='card bg-dark text-white' style={{minWidth: "200px", maxWidth: "500px"}}>
+                                    <div className='card bg-dark text-white rounded-100' style={{minWidth: "200px", maxWidth: "400px"}}>
                                         <img src={item.image} />
                                         <div className='card-body'>
                                             <h5 className='card-title'>{item.name}</h5>
