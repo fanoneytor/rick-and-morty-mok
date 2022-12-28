@@ -1,4 +1,3 @@
-
 import React from 'react'
 
 const Busqueda = ({ setBuscar }) => {
@@ -7,7 +6,7 @@ const Busqueda = ({ setBuscar }) => {
     };
     return (
         <>
-        <h1>BARRA DE BUSQUEDA</h1>
+        <h1>BUSQUEDA DE PERSONAJES</h1>
         <input onChange={busqueda} type="text" placeholder="Ingrese una descripcion" className="form-control" />
         </>
     )

@@ -7,12 +7,67 @@ import Personajes from "./components/Personajes";
 
 function App() {
 
+  const [numeroPagina, setNumeroPagina] = useState(1)
+  const [numeroPaginaDoce, setNumeroPaginaDoce] = useState(1)
+  const [listaPosiciones, setListaPosiciones] = useState([1, 1, 12, 1, 20, 0, 11])//[pagVt, dcIni, dcFin, vtIni, vtFin, finIni, finFin] [1, 1, 12, 1, 20, 0, 11]
   const [personajes, setPersonajes] = useState([])
+  const [personajesFinal, setPersonajesFinal] = useState([])
   const [info, setInfo] = useState({})
   const [buscar, setBuscar] = useState("")
 
-  var api = "https://rickandmortyapi.com/api/character/?name=" + buscar;
+  var api = "https://rickandmortyapi.com/api/character/?page=" + numeroPagina + "&name=" + buscar;
 
+  function posiciones(pag) {
+    let posiciones = []
+    let iterador = 1
+    let posVeinteIni = iterador * 20 - 19
+    let posVeinteFin = iterador * 20
+    let posDoceIni, posDoceFin, posFinalIni, posFinalFin
+    for (let i = 1; i <= pag; i++) {
+      posDoceIni = i * 12 - 11
+      posDoceFin = i * 12
+      if (posDoceFin > posVeinteFin) {
+        iterador++
+      }
+      posVeinteIni = iterador * 20 - 19
+      posVeinteFin = iterador * 20
+    }
+    if (posDoceIni < posVeinteIni) {
+      posFinalIni = 0
+      posFinalFin = posDoceFin % 10
+      posiciones = [iterador, posDoceIni, posDoceFin, posVeinteIni, posVeinteFin, posFinalIni, posFinalFin]
+      setListaPosiciones(posiciones)
+    } else {
+      posFinalFin = posDoceFin - posVeinteIni
+      posFinalIni = posFinalFin - 11
+      posiciones = [iterador, posDoceIni, posDoceFin, posVeinteIni, posVeinteFin, posFinalIni, posFinalFin]
+      setListaPosiciones(posiciones)
+    }
+  }
+
+  function prueba(result) {
+    console.log("ENTRA")
+    let lstPosiciones = listaPosiciones
+    let personajesFinalst = personajesFinal
+    let pagVt = lstPosiciones[0]
+    let finIni = lstPosiciones[5]
+    let finFin = lstPosiciones[6]
+    if (personajesFinalst.length > 0 && personajesFinalst.length < 12) {
+      let listaAux = []
+      listaAux = result.slice(20 - (12 - finFin), 20)
+      personajesFinalst = personajesFinalst.reverse().concat(listaAux.reverse())
+      setPersonajesFinal(personajesFinalst)
+      setPersonajes(personajesFinalst.reverse())
+    } else {
+      if (finFin - finIni === 11) {
+        setPersonajes(result.slice(finIni, finFin + 1))
+      } else {
+        personajesFinalst = result.slice(finIni, finFin)
+        setPersonajesFinal(personajesFinalst)
+        setNumeroPagina(pagVt - 1)
+      }
+    }
+  }
 
   function fetchPersonajes(url) {
     fetch(url)
@@ -22,8 +77,8 @@ function App() {
           setPersonajes(data.error);
         }
         else {
-          setPersonajes(data.results)
           setInfo(data.info);
+          prueba(data.results)
         }
       })
       .catch(error => console.log(error));
@@ -33,13 +88,15 @@ function App() {
     fetchPersonajes(api);
   }, [api]);
 
-  const onAnterior = () => {
-    fetchPersonajes(info.prev);
-  };
+  useEffect(() => {
+    posiciones(numeroPaginaDoce)
+  }, [numeroPaginaDoce])
 
-  const onSiguiente = () => {
-    fetchPersonajes(info.next);
-  }
+  useEffect(() => {
+    const lista = listaPosiciones
+    setNumeroPagina(lista[0])
+    console.log(numeroPagina)
+  }, [listaPosiciones])
 
   return (
     <>
@@ -47,51 +104,10 @@ function App() {
 
       <div className="container mt-5">
         <Busqueda setBuscar={setBuscar} />
-        <Paginacion prev={info.prev} next={info.next} onAnterior={onAnterior} onSiguiente={onSiguiente} />
-        <Personajes personajes={personajes.slice(0,12)}/>
-        <Paginacion prev={info.prev} next={info.next} onAnterior={onAnterior} onSiguiente={onSiguiente} />
+        <Paginacion setNumeroPaginaDoce={setNumeroPaginaDoce} info={info} />
+        <Personajes personajes={personajes} />
       </div>
     </>
   );
 };
-//<Paginacion prev={info.prev} next={info.next} onAnterior={onAnterior} onSiguiente={onSiguiente} />
 export default App;
-
-/*
-const [personajesRestantes, setPersonajesRestantes] = useState([])
-function validacionApi(next, results) {
-    let listaAuxiliar = []
-    let listaPersonajesTem = []
-    let listaAuxiliarRestantes = personajesRestantes
-    if (next == null) {
-      for (const personaje of results) {
-        if (listaPersonajesTem.length < 12) {
-          listaPersonajesTem.push(personaje)
-        } else {
-          listaAuxiliar.push(personaje)
-        }
-      }
-      setPersonajes(listaPersonajesTem);
-      setPersonajesRestantes(listaAuxiliar)
-    } else {
-      for (const personaje of results) {
-        console.log("auxiliar: ", listaAuxiliarRestantes)
-        if (listaAuxiliarRestantes.length < 12) {
-          listaAuxiliarRestantes.push(personaje)
-        } else {
-          listaAuxiliar.push(personaje)
-        }
-      }
-      setPersonajesRestantes(listaAuxiliar)
-      setPersonajes(listaAuxiliarRestantes);
-    }
-
-  }
-  
-  const onSiguiente = () => {
-    if (personajesRestantes.length > 12) {
-      validacionApi(null, personajesRestantes)
-    } else {
-      fetchPersonajes(info.next);
-    }
-  };*/

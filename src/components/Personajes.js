@@ -20,6 +20,7 @@ const Personajes = ({ personajes = [] }) => {
                                         <div className='card-body'>
                                             <h5 className='card-title'>{item.name}</h5>
                                             <hr />
+                                            <p>id: {item.id}</p>
                                             <p>Estatus: {item.status}</p>
                                             <p>Especies: {item.species}</p>
                                             <p>Genero: {item.gender}</p>
